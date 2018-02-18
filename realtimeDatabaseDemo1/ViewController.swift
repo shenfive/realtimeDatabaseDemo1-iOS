@@ -7,13 +7,29 @@
 //
 
 import UIKit
+import Firebase
 
 class ViewController: UIViewController {
 
+    //設定資料庫參照
+    var ref:DatabaseReference!
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        //取得資料庫參照
+        ref = Database.database().reference()
+        Auth.auth().signInAnonymously { (user, error) in
+            if error != nil{
+                print(error?.localizedDescription)
+            }else{
+                //登入無誤時，取得 codename 字串
+                self.ref.child("appdefault/codename").observeSingleEvent(of: .value, with: { (snapshot) in
+                    print("App Codename:\(snapshot.value as! String)")
+                })
+            }
+        }
     }
+
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
